@@ -10,7 +10,7 @@ Our first collection features premium athletic-inspired pieces designed for peop
 
 - Black & White Fleece Jogging Suit
 - Red & White Fleece Jogging Suit
-- Aqua & White Fleece Jogging Suit
+- Blue & White Fleece Jogging Suit
 - JRNY Black & White Beanie
 
 Brand Philosophy
