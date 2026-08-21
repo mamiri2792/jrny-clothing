@@ -1,0 +1,1896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>JRNY Admin | Order Management</title>
+<meta name="description" content="Private JRNY order management dashboard.">
+<meta name="theme-color" content="#080808">
+
+<style>
+:root{
+  --black:#080808;
+  --card:#121212;
+  --card2:#181818;
+  --line:#2b2b2b;
+  --white:#fff;
+  --muted:#999;
+  --green:#19c463;
+  --yellow:#e8b84a;
+  --red:#e05252;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background:var(--black);
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  line-height:1.5;
+  min-height:100vh;
+}
+
+button,input,select{font:inherit}
+button{cursor:pointer}
+
+.hidden{display:none!important}
+
+/* LOGIN */
+
+.login-screen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:25px;
+  background:radial-gradient(circle at center,#292929 0%,#101010 42%,#080808 75%);
+}
+
+.login-box{
+  width:min(430px,100%);
+  background:#111;
+  border:1px solid #333;
+  padding:38px;
+  text-align:center;
+}
+
+.logo{
+  font-size:42px;
+  font-weight:950;
+  letter-spacing:9px;
+  margin-bottom:10px;
+}
+
+.login-label{
+  color:#888;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:4px;
+  margin-bottom:28px;
+}
+
+.login-box h1{
+  font-size:25px;
+  margin-bottom:10px;
+}
+
+.login-box p{
+  color:#888;
+  font-size:13px;
+  margin-bottom:25px;
+}
+
+.google-button{
+  width:100%;
+  padding:15px;
+  border:1px solid white;
+  background:white;
+  color:black;
+  font-weight:900;
+}
+
+.google-button:hover{
+  background:transparent;
+  color:white;
+}
+
+.login-status{
+  margin-top:15px;
+  color:#999;
+  font-size:12px;
+  min-height:18px;
+}
+
+/* DENIED */
+
+.access-denied{
+  min-height:100vh;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:25px;
+}
+
+.access-denied.active{display:flex}
+
+.denied-box{
+  width:min(450px,100%);
+  padding:40px;
+  border:1px solid #333;
+  background:#111;
+}
+
+.denied-box h1{margin-bottom:12px}
+
+.denied-box p{
+  color:#888;
+  font-size:13px;
+  margin-bottom:20px;
+}
+
+.denied-box button{
+  padding:13px 20px;
+  background:#fff;
+  color:#000;
+  border:none;
+  font-weight:900;
+}
+
+/* DASHBOARD */
+
+.dashboard{
+  display:none;
+  min-height:100vh;
+}
+
+.dashboard.active{display:block}
+
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  padding:17px 5%;
+  background:rgba(8,8,8,.95);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid #292929;
+}
+
+.top-brand{
+  font-size:23px;
+  font-weight:950;
+  letter-spacing:5px;
+}
+
+.admin-label{
+  color:#888;
+  font-size:10px;
+  letter-spacing:2px;
+}
+
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.admin-email{
+  color:#999;
+  font-size:11px;
+}
+
+.logout-button{
+  padding:9px 13px;
+  border:1px solid #444;
+  background:transparent;
+  color:white;
+  font-size:11px;
+  font-weight:900;
+}
+
+.logout-button:hover{
+  background:#fff;
+  color:#000;
+}
+
+main{
+  width:min(1250px,92%);
+  margin:auto;
+  padding:55px 0;
+}
+
+.page-heading{
+  margin-bottom:35px;
+}
+
+.eyebrow{
+  color:#888;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:4px;
+  margin-bottom:10px;
+}
+
+.page-heading h1{
+  font-size:clamp(35px,6vw,58px);
+  line-height:1;
+  margin-bottom:10px;
+}
+
+.page-heading p{
+  color:#888;
+  font-size:14px;
+}
+
+/* STATS */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:35px;
+}
+
+.stat-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  padding:22px;
+}
+
+.stat-label{
+  color:#888;
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:2px;
+  margin-bottom:10px;
+}
+
+.stat-value{
+  font-size:30px;
+  font-weight:950;
+}
+
+/* SEARCH */
+
+.tools{
+  display:grid;
+  grid-template-columns:1fr 220px auto;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.search-box,
+.filter-select{
+  width:100%;
+  padding:13px 14px;
+  background:#111;
+  color:#fff;
+  border:1px solid #333;
+  outline:none;
+}
+
+.search-box:focus,
+.filter-select:focus{
+  border-color:#fff;
+}
+
+.clear-button,
+.refresh-button{
+  padding:12px 16px;
+  background:#fff;
+  color:#000;
+  border:none;
+  font-size:11px;
+  font-weight:900;
+}
+
+.clear-button:hover,
+.refresh-button:hover{
+  background:#ddd;
+}
+
+/* ORDERS */
+
+.orders-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:15px;
+}
+
+.orders-header h2{
+  font-size:23px;
+}
+
+.results-count{
+  color:#777;
+  font-size:11px;
+}
+
+.orders-container{
+  display:grid;
+  gap:15px;
+}
+
+.order-card{
+  background:var(--card);
+  border:1px solid var(--line);
+  padding:23px;
+}
+
+.order-card:hover{
+  border-color:#444;
+}
+
+.order-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:20px;
+  padding-bottom:18px;
+  border-bottom:1px solid var(--line);
+}
+
+.order-number{
+  font-size:16px;
+  font-weight:950;
+  letter-spacing:1px;
+}
+
+.order-date{
+  color:#777;
+  font-size:11px;
+  margin-top:4px;
+}
+
+.status-select{
+  padding:9px 10px;
+  min-width:145px;
+  border:1px solid #444;
+  background:#080808;
+  color:#fff;
+  font-size:11px;
+  font-weight:800;
+}
+
+.status-select:focus{
+  border-color:#fff;
+  outline:none;
+}
+
+.order-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:22px;
+  padding-top:20px;
+}
+
+.order-section h3{
+  color:#777;
+  font-size:9px;
+  letter-spacing:2px;
+  margin-bottom:9px;
+}
+
+.order-section p{
+  font-size:13px;
+  margin-bottom:4px;
+  word-break:break-word;
+}
+
+.muted{color:#888}
+
+.order-items{
+  margin-top:8px;
+}
+
+.item-line{
+  padding:8px 0;
+  border-bottom:1px solid #252525;
+  font-size:12px;
+}
+
+.item-line:last-child{
+  border-bottom:none;
+}
+
+.item-detail{
+  color:#888;
+  font-size:10px;
+  margin-top:2px;
+}
+
+.order-bottom{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+  padding-top:20px;
+  margin-top:18px;
+  border-top:1px solid var(--line);
+}
+
+.payment{
+  color:#aaa;
+  font-size:11px;
+}
+
+.total{
+  font-size:22px;
+  font-weight:950;
+}
+
+/* EMPTY / LOADING / ERROR */
+
+.empty,
+.loading{
+  text-align:center;
+  padding:70px 20px;
+  background:var(--card);
+  border:1px solid var(--line);
+  color:#777;
+}
+
+.error{
+  padding:18px;
+  background:#181010;
+  border:1px solid #472929;
+  color:#ddd;
+  font-size:13px;
+  margin-bottom:20px;
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .order-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .tools{
+    grid-template-columns:1fr 180px;
+  }
+
+  .clear-button{
+    grid-column:1 / -1;
+  }
+}
+
+@media(max-width:650px){
+
+  .topbar{
+    padding:14px 5%;
+  }
+
+  .admin-email{
+    display:none;
+  }
+
+  main{
+    width:92%;
+    padding:40px 0;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .stat-card{
+    padding:17px;
+  }
+
+  .stat-value{
+    font-size:25px;
+  }
+
+  .tools{
+    grid-template-columns:1fr;
+  }
+
+  .clear-button{
+    grid-column:auto;
+  }
+
+  .orders-header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .order-top{
+    flex-direction:column;
+  }
+
+  .status-select{
+    width:100%;
+  }
+
+  .order-grid{
+    grid-template-columns:1fr;
+  }
+
+  .order-bottom{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .login-box{
+    padding:30px 22px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<section class="login-screen" id="loginScreen">
+
+  <div class="login-box">
+
+    <div class="logo">JRNY</div>
+
+    <div class="login-label">
+      PRIVATE ADMIN
+    </div>
+
+    <h1>Order Management</h1>
+
+    <p>
+      Sign in with the authorized JRNY Google account
+      to manage customer orders.
+    </p>
+
+    <button
+      class="google-button"
+      id="googleLoginButton"
+    >
+      SIGN IN WITH GOOGLE
+    </button>
+
+    <div
+      class="login-status"
+      id="loginStatus"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- ACCESS DENIED -->
+
+<section
+  class="access-denied"
+  id="accessDenied"
+>
+
+  <div class="denied-box">
+
+    <h1>ACCESS DENIED</h1>
+
+    <p>
+      This Google account is not authorized
+      to access the JRNY admin dashboard.
+    </p>
+
+    <button id="deniedLogoutButton">
+      SIGN OUT
+    </button>
+
+  </div>
+
+</section>
+
+
+<!-- DASHBOARD -->
+
+<div
+  class="dashboard"
+  id="dashboard"
+>
+
+<header class="topbar">
+
+  <div>
+
+    <div class="top-brand">
+      JRNY
+    </div>
+
+    <div class="admin-label">
+      ORDER MANAGEMENT
+    </div>
+
+  </div>
+
+  <div class="top-actions">
+
+    <span
+      class="admin-email"
+      id="adminEmail"
+    ></span>
+
+    <button
+      class="logout-button"
+      id="logoutButton"
+    >
+      SIGN OUT
+    </button>
+
+  </div>
+
+</header>
+
+
+<main>
+
+  <div class="page-heading">
+
+    <div class="eyebrow">
+      JRNY / PRIVATE ADMIN
+    </div>
+
+    <h1>ORDERS</h1>
+
+    <p>
+      Manage JRNY customer orders and payment status.
+    </p>
+
+  </div>
+
+
+  <!-- STATS -->
+
+  <section
+    class="stats"
+    style="padding:0;"
+  >
+
+    <div class="stat-card">
+
+      <div class="stat-label">
+        TOTAL ORDERS
+      </div>
+
+      <div
+        class="stat-value"
+        id="totalOrders"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="stat-card">
+
+      <div class="stat-label">
+        PENDING
+      </div>
+
+      <div
+        class="stat-value"
+        id="pendingOrders"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="stat-card">
+
+      <div class="stat-label">
+        PAID
+      </div>
+
+      <div
+        class="stat-value"
+        id="paidOrders"
+      >
+        0
+      </div>
+
+    </div>
+
+    <div class="stat-card">
+
+      <div class="stat-label">
+        ORDER VALUE
+      </div>
+
+      <div
+        class="stat-value"
+        id="totalRevenue"
+      >
+        $0.00
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- SEARCH / FILTER -->
+
+  <div class="tools">
+
+    <input
+      id="searchInput"
+      class="search-box"
+      type="search"
+      placeholder="Search customer, email, or order number..."
+      autocomplete="off"
+    >
+
+    <select
+      id="statusFilter"
+      class="filter-select"
+    >
+
+      <option value="all">
+        ALL ORDERS
+      </option>
+
+      <option value="pending">
+        PENDING
+      </option>
+
+      <option value="paid">
+        PAID
+      </option>
+
+      <option value="processing">
+        PROCESSING
+      </option>
+
+      <option value="shipped">
+        SHIPPED
+      </option>
+
+      <option value="completed">
+        COMPLETED
+      </option>
+
+    </select>
+
+    <button
+      class="clear-button"
+      id="clearButton"
+    >
+      CLEAR FILTERS
+    </button>
+
+  </div>
+
+
+  <!-- ORDERS HEADER -->
+
+  <div class="orders-header">
+
+    <div>
+
+      <h2>
+        CUSTOMER ORDERS
+      </h2>
+
+      <div
+        class="results-count"
+        id="resultsCount"
+      >
+        0 orders
+      </div>
+
+    </div>
+
+    <button
+      class="refresh-button"
+      id="refreshButton"
+    >
+      REFRESH ORDERS
+    </button>
+
+  </div>
+
+
+  <div id="message"></div>
+
+
+  <div
+    class="orders-container"
+    id="ordersContainer"
+  >
+
+    <div class="loading">
+      Loading orders...
+    </div>
+
+  </div>
+
+</main>
+
+</div>
+
+
+<script type="module">
+
+import {
+  initializeApp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  doc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+/* ==========================================
+   FIREBASE CONFIG
+========================================== */
+
+const firebaseConfig = {
+
+  apiKey:
+    "AIzaSyBQmzSMrGJ64e31KMQk8xR5e2wSTGFAlCM",
+
+  authDomain:
+    "jrny-clothing.firebaseapp.com",
+
+  projectId:
+    "jrny-clothing",
+
+  storageBucket:
+    "jrny-clothing.firebasestorage.app",
+
+  messagingSenderId:
+    "111907288107",
+
+  appId:
+    "1:111907288107:web:d4678dbbdcaf55f7dd666e"
+
+};
+
+
+/* ==========================================
+   AUTHORIZED ADMIN
+========================================== */
+
+const ADMIN_EMAIL =
+  "mrich2792@gmail.com";
+
+
+/* ==========================================
+   INITIALIZE
+========================================== */
+
+const app =
+  initializeApp(firebaseConfig);
+
+const auth =
+  getAuth(app);
+
+const db =
+  getFirestore(app);
+
+const provider =
+  new GoogleAuthProvider();
+
+
+/* ==========================================
+   ELEMENTS
+========================================== */
+
+const loginScreen =
+  document.getElementById("loginScreen");
+
+const dashboard =
+  document.getElementById("dashboard");
+
+const accessDenied =
+  document.getElementById("accessDenied");
+
+const googleLoginButton =
+  document.getElementById("googleLoginButton");
+
+const loginStatus =
+  document.getElementById("loginStatus");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+const deniedLogoutButton =
+  document.getElementById("deniedLogoutButton");
+
+const refreshButton =
+  document.getElementById("refreshButton");
+
+const searchInput =
+  document.getElementById("searchInput");
+
+const statusFilter =
+  document.getElementById("statusFilter");
+
+const clearButton =
+  document.getElementById("clearButton");
+
+const adminEmail =
+  document.getElementById("adminEmail");
+
+const ordersContainer =
+  document.getElementById("ordersContainer");
+
+const message =
+  document.getElementById("message");
+
+const resultsCount =
+  document.getElementById("resultsCount");
+
+
+let allOrders = [];
+
+
+/* ==========================================
+   GOOGLE LOGIN
+========================================== */
+
+googleLoginButton.addEventListener(
+  "click",
+  async () => {
+
+    loginStatus.textContent =
+      "Connecting to Google...";
+
+    googleLoginButton.disabled = true;
+
+    try {
+
+      await signInWithPopup(
+        auth,
+        provider
+      );
+
+    } catch(error) {
+
+      console.error(error);
+
+      loginStatus.textContent =
+        "Google sign-in could not be completed.";
+
+      googleLoginButton.disabled = false;
+
+    }
+
+  }
+);
+
+
+/* ==========================================
+   AUTH STATE
+========================================== */
+
+onAuthStateChanged(
+  auth,
+  async user => {
+
+    if(!user){
+
+      loginScreen.style.display =
+        "flex";
+
+      dashboard.classList.remove(
+        "active"
+      );
+
+      accessDenied.classList.remove(
+        "active"
+      );
+
+      googleLoginButton.disabled =
+        false;
+
+      return;
+
+    }
+
+
+    const email =
+      (user.email || "").toLowerCase();
+
+
+    if(
+      email !==
+      ADMIN_EMAIL.toLowerCase()
+    ){
+
+      loginScreen.style.display =
+        "none";
+
+      dashboard.classList.remove(
+        "active"
+      );
+
+      accessDenied.classList.add(
+        "active"
+      );
+
+      return;
+
+    }
+
+
+    loginScreen.style.display =
+      "none";
+
+    accessDenied.classList.remove(
+      "active"
+    );
+
+    dashboard.classList.add(
+      "active"
+    );
+
+    adminEmail.textContent =
+      user.email;
+
+
+    await loadOrders();
+
+  }
+);
+
+
+/* ==========================================
+   LOAD ORDERS
+========================================== */
+
+async function loadOrders(){
+
+  ordersContainer.innerHTML =
+    '<div class="loading">Loading orders...</div>';
+
+  try{
+
+    const snapshot =
+      await getDocs(
+        collection(db,"orders")
+      );
+
+
+    allOrders = [];
+
+
+    snapshot.forEach(
+      orderSnapshot => {
+
+        allOrders.push({
+
+          id:
+            orderSnapshot.id,
+
+          ...orderSnapshot.data()
+
+        });
+
+      }
+    );
+
+
+    /*
+      Sort newest first.
+      This avoids requiring a Firestore
+      composite/index query.
+    */
+
+    allOrders.sort(
+      (a,b) =>
+        getTime(b.createdAt) -
+        getTime(a.createdAt)
+    );
+
+
+    renderStats(allOrders);
+
+    applyFilters();
+
+
+  }catch(error){
+
+    console.error(error);
+
+    ordersContainer.innerHTML = "";
+
+    message.innerHTML = `
+      <div class="error">
+        <strong>Could not load orders.</strong><br><br>
+        ${escapeHtml(error.message)}
+        <br><br>
+        Verify that your Firestore rules allow
+        the authorized admin account to read orders.
+      </div>
+    `;
+
+  }
+
+}
+
+
+/* ==========================================
+   FILTERING
+========================================== */
+
+function applyFilters(){
+
+  const search =
+    searchInput.value
+      .trim()
+      .toLowerCase();
+
+
+  const selectedStatus =
+    statusFilter.value;
+
+
+  const filtered =
+    allOrders.filter(
+      order => {
+
+        const customer =
+          order.customer || {};
+
+        const orderNumber =
+          String(
+            order.orderNumber || ""
+          ).toLowerCase();
+
+        const name =
+          String(
+            customer.name || ""
+          ).toLowerCase();
+
+        const email =
+          String(
+            customer.email || ""
+          ).toLowerCase();
+
+        const status =
+          String(
+            order.paymentStatus ||
+            "pending"
+          ).toLowerCase();
+
+
+        const matchesSearch =
+          !search ||
+          orderNumber.includes(search) ||
+          name.includes(search) ||
+          email.includes(search);
+
+
+        const matchesStatus =
+          selectedStatus === "all" ||
+          status === selectedStatus;
+
+
+        return (
+          matchesSearch &&
+          matchesStatus
+        );
+
+      }
+    );
+
+
+  renderOrders(filtered);
+
+}
+
+
+/* ==========================================
+   SEARCH
+========================================== */
+
+searchInput.addEventListener(
+  "input",
+  applyFilters
+);
+
+
+statusFilter.addEventListener(
+  "change",
+  applyFilters
+);
+
+
+clearButton.addEventListener(
+  "click",
+  () => {
+
+    searchInput.value = "";
+
+    statusFilter.value = "all";
+
+    applyFilters();
+
+  }
+);
+
+
+/* ==========================================
+   STATS
+========================================== */
+
+function renderStats(orders){
+
+  const total =
+    orders.length;
+
+
+  const pending =
+    orders.filter(
+      order =>
+        getStatus(order) ===
+        "pending"
+    ).length;
+
+
+  const paid =
+    orders.filter(
+      order =>
+        [
+          "paid",
+          "processing",
+          "shipped",
+          "completed"
+        ].includes(
+          getStatus(order)
+        )
+    ).length;
+
+
+  const revenue =
+    orders.reduce(
+      (sum,order) =>
+        sum +
+        Number(order.total || 0),
+      0
+    );
+
+
+  document.getElementById(
+    "totalOrders"
+  ).textContent =
+    total;
+
+
+  document.getElementById(
+    "pendingOrders"
+  ).textContent =
+    pending;
+
+
+  document.getElementById(
+    "paidOrders"
+  ).textContent =
+    paid;
+
+
+  document.getElementById(
+    "totalRevenue"
+  ).textContent =
+    money(revenue);
+
+}
+
+
+/* ==========================================
+   RENDER ORDERS
+========================================== */
+
+function renderOrders(orders){
+
+  resultsCount.textContent =
+    `${orders.length} ${
+      orders.length === 1
+        ? "order"
+        : "orders"
+    }`;
+
+
+  if(!orders.length){
+
+    ordersContainer.innerHTML = `
+      <div class="empty">
+        NO ORDERS MATCH YOUR SEARCH.
+      </div>
+    `;
+
+    return;
+
+  }
+
+
+  ordersContainer.innerHTML =
+    orders
+      .map(order => renderOrder(order))
+      .join("");
+
+
+  document
+    .querySelectorAll(".status-select")
+    .forEach(select => {
+
+      select.addEventListener(
+        "change",
+        async event => {
+
+          const orderId =
+            event.target.dataset.orderId;
+
+          const newStatus =
+            event.target.value;
+
+          await updateOrderStatus(
+            orderId,
+            newStatus,
+            event.target
+          );
+
+        }
+      );
+
+    });
+
+}
+
+
+/* ==========================================
+   ORDER CARD
+========================================== */
+
+function renderOrder(order){
+
+  const customer =
+    order.customer || {};
+
+  const shipping =
+    order.shipping || {};
+
+  const items =
+    Array.isArray(order.items)
+      ? order.items
+      : [];
+
+
+  const status =
+    getStatus(order);
+
+
+  const date =
+    formatDate(order.createdAt);
+
+
+  return `
+
+  <article class="order-card">
+
+    <div class="order-top">
+
+      <div>
+
+        <div class="order-number">
+
+          ${escapeHtml(
+            order.orderNumber ||
+            order.id
+          )}
+
+        </div>
+
+        <div class="order-date">
+
+          ${escapeHtml(date)}
+
+        </div>
+
+      </div>
+
+
+      <select
+        class="status-select"
+        data-order-id="${escapeHtml(order.id)}"
+      >
+
+        ${statusOption(
+          "pending",
+          status,
+          "Pending"
+        )}
+
+        ${statusOption(
+          "paid",
+          status,
+          "Paid"
+        )}
+
+        ${statusOption(
+          "processing",
+          status,
+          "Processing"
+        )}
+
+        ${statusOption(
+          "shipped",
+          status,
+          "Shipped"
+        )}
+
+        ${statusOption(
+          "completed",
+          status,
+          "Completed"
+        )}
+
+      </select>
+
+    </div>
+
+
+    <div class="order-grid">
+
+
+      <div class="order-section">
+
+        <h3>
+          CUSTOMER
+        </h3>
+
+        <p>
+          ${escapeHtml(
+            customer.name || "—"
+          )}
+        </p>
+
+        <p class="muted">
+          ${escapeHtml(
+            customer.email || "—"
+          )}
+        </p>
+
+      </div>
+
+
+      <div class="order-section">
+
+        <h3>
+          SHIPPING
+        </h3>
+
+        <p>
+          ${escapeHtml(
+            shipping.address || "—"
+          )}
+        </p>
+
+        <p>
+
+          ${escapeHtml(
+            [
+              shipping.city,
+              shipping.state,
+              shipping.zip
+            ]
+            .filter(Boolean)
+            .join(", ")
+          )}
+
+        </p>
+
+      </div>
+
+
+      <div class="order-section">
+
+        <h3>
+          ITEMS
+        </h3>
+
+        <div class="order-items">
+
+          ${
+            items.length
+
+            ? items.map(
+                item => `
+
+                <div class="item-line">
+
+                  <strong>
+                    ${escapeHtml(
+                      item.name ||
+                      "Item"
+                    )}
+                  </strong>
+
+                  × ${Number(
+                    item.quantity || 1
+                  )}
+
+                  <div class="item-detail">
+
+                    Size:
+                    ${escapeHtml(
+                      item.size ||
+                      "One Size"
+                    )}
+
+                    ·
+
+                    ${money(
+                      Number(
+                        item.price || 0
+                      )
+                    )}
+
+                    each
+
+                  </div>
+
+                </div>
+
+              `
+              ).join("")
+
+            : `<div class="muted">
+                No item details
+              </div>`
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="order-bottom">
+
+      <div class="payment">
+
+        Payment:
+        <strong>
+          ${escapeHtml(
+            order.paymentMethod ||
+            "Cash App"
+          )}
+        </strong>
+
+        ·
+
+        ${escapeHtml(
+          order.cashApp ||
+          "$letsgoup1047"
+        )}
+
+      </div>
+
+
+      <div class="total">
+
+        ${money(
+          Number(
+            order.total || 0
+          )
+        )}
+
+      </div>
+
+    </div>
+
+  </article>
+
+  `;
+
+}
+
+
+/* ==========================================
+   STATUS OPTION
+========================================== */
+
+function statusOption(
+  value,
+  current,
+  label
+){
+
+  return `
+
+    <option
+      value="${value}"
+      ${current === value
+        ? "selected"
+        : ""}
+    >
+      ${label}
+    </option>
+
+  `;
+
+}
+
+
+/* ==========================================
+   UPDATE STATUS
+========================================== */
+
+async function updateOrderStatus(
+  orderId,
+  newStatus,
+  selectElement
+){
+
+  selectElement.disabled =
+    true;
+
+
+  try{
+
+    await updateDoc(
+      doc(
+        db,
+        "orders",
+        orderId
+      ),
+      {
+        paymentStatus:
+          newStatus
+      }
+    );
+
+
+    const localOrder =
+      allOrders.find(
+        order =>
+          order.id === orderId
+      );
+
+
+    if(localOrder){
+
+      localOrder.paymentStatus =
+        newStatus;
+
+    }
+
+
+    renderStats(
+      allOrders
+    );
+
+    applyFilters();
+
+
+    showMessage(
+      "Order status updated successfully.",
+      false
+    );
+
+
+  }catch(error){
+
+    console.error(error);
+
+    selectElement.disabled =
+      false;
+
+    showMessage(
+      "Could not update order: " +
+      error.message,
+      true
+    );
+
+  }
+
+}
+
+
+/* ==========================================
+   REFRESH
+========================================== */
+
+refreshButton.addEventListener(
+  "click",
+  async () => {
+
+    refreshButton.disabled =
+      true;
+
+    refreshButton.textContent =
+      "REFRESHING...";
+
+
+    await loadOrders();
+
+
+    refreshButton.disabled =
+      false;
+
+    refreshButton.textContent =
+      "REFRESH ORDERS";
+
+  }
+);
+
+
+/* ==========================================
+   LOGOUT
+========================================== */
+
+logoutButton.addEventListener(
+  "click",
+  async () => {
+
+    await signOut(auth);
+
+  }
+);
+
+
+deniedLogoutButton.addEventListener(
+  "click",
+  async () => {
+
+    await signOut(auth);
+
+  }
+);
+
+
+/* ==========================================
+   HELPERS
+========================================== */
+
+function getStatus(order){
+
+  return String(
+    order.paymentStatus ||
+    "pending"
+  ).toLowerCase();
+
+}
+
+
+function getTime(timestamp){
+
+  if(
+    timestamp &&
+    typeof timestamp.toMillis ===
+      "function"
+  ){
+
+    return timestamp.toMillis();
+
+  }
+
+
+  if(
+    timestamp &&
+    typeof timestamp.toDate ===
+      "function"
+  ){
+
+    return timestamp.toDate().getTime();
+
+  }
+
+
+  return 0;
+
+}
+
+
+function formatDate(timestamp){
+
+  if(
+    timestamp &&
+    typeof timestamp.toDate ===
+      "function"
+  ){
+
+    return timestamp
+      .toDate()
+      .toLocaleString();
+
+  }
+
+
+  return "Date unavailable";
+
+}
+
+
+function money(value){
+
+  return "$" +
+    Number(value || 0)
+      .toFixed(2);
+
+}
+
+
+function escapeHtml(value){
+
+  return String(value)
+    .replace(
+      /[&<>"']/g,
+      character => ({
+
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+
+      }[character])
+    );
+
+}
+
+
+function showMessage(
+  text,
+  isError
+){
+
+  message.innerHTML = `
+
+    <div
+      class="${isError ? "error" : ""}"
+      style="${
+        isError
+          ? ""
+          : "color:#999;font-size:12px;margin-bottom:15px;"
+      }"
+    >
+
+      ${escapeHtml(text)}
+
+    </div>
+
+  `;
+
+
+  setTimeout(
+    () => {
+      message.innerHTML = "";
+    },
+    3000
+  );
+
+}
+
+</script>
+
+</body>
+</html>
